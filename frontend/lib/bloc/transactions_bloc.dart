@@ -9,6 +9,12 @@ sealed class TransactionsEvent {}
 
 class TransactionsRequested extends TransactionsEvent {}
 
+class TransactionDeleteRequested extends TransactionsEvent {
+  final int id;
+
+  TransactionDeleteRequested(this.id);
+}
+
 // STATES
 
 sealed class TransactionsState {}
@@ -39,6 +45,20 @@ class TransactionsBloc extends Bloc<TransactionsEvent, TransactionsState> {
       emit(TransactionsLoading());
 
       try {
+        final transactions = await repository.fetchTransactions();
+
+        emit(TransactionsLoaded(transactions));
+      } catch (e) {
+        emit(TransactionsFailure(e.toString()));
+      }
+    });
+
+    on<TransactionDeleteRequested>((event, emit) async {
+      emit(TransactionsLoading());
+
+      try {
+        await repository.deleteTransaction(event.id);
+
         final transactions = await repository.fetchTransactions();
 
         emit(TransactionsLoaded(transactions));

@@ -24,10 +24,10 @@ class HomeScreen extends StatelessWidget {
             tooltip: 'История операций',
             icon: const Icon(Icons.receipt_long),
 
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => BlocProvider(
+            onPressed: () async {
+              await Navigator.of(context).push<void>(
+                MaterialPageRoute<void>(
+                  builder: (_) => BlocProvider(
                     create: (_) =>
                         TransactionsBloc(TransactionRepository())
                           ..add(TransactionsRequested()),
@@ -36,6 +36,11 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
               );
+
+              if (!context.mounted) return;
+
+              // Обновляем баланс после возврата из истории
+              context.read<BalanceBloc>().add(BalanceRequested());
             },
           ),
 

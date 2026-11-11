@@ -3,6 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/transactions_bloc.dart';
 import '../models/transaction.dart';
+import '../bloc/edit_transaction_bloc.dart';
+import '../repositories/transaction_repository.dart';
+import 'edit_transaction_screen.dart';
 
 class TransactionsScreen extends StatelessWidget {
   const TransactionsScreen({super.key});
@@ -12,6 +15,65 @@ class TransactionsScreen extends StatelessWidget {
     final month = date.month.toString().padLeft(2, '0');
 
     return '$day.$month.${date.year}';
+  }
+
+  Future<void> _confirmDelete(
+    BuildContext context,
+    Transaction transaction,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Удалить операцию?'),
+
+        content: Text(
+          'Удалить операцию "${transaction.category}" '
+          'на сумму ${transaction.amount} сом?',
+        ),
+
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop(false);
+            },
+            child: const Text('Отмена'),
+          ),
+
+          TextButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop(true);
+            },
+            child: const Text('Удалить'),
+          ),
+        ],
+      ),
+    );
+
+    if (!context.mounted || confirmed != true) {
+      return;
+    }
+
+    context.read<TransactionsBloc>().add(
+      TransactionDeleteRequested(transaction.id),
+    );
+  }
+
+  Future<void> _openEdit(BuildContext context, Transaction transaction) async {
+    final updated = await Navigator.of(context).push<bool>(
+      MaterialPageRoute<bool>(
+        builder: (_) => BlocProvider(
+          create: (_) => EditTransactionBloc(TransactionRepository()),
+
+          child: EditTransactionScreen(transaction: transaction),
+        ),
+      ),
+    );
+
+    if (!context.mounted) return;
+
+    if (updated == true) {
+      context.read<TransactionsBloc>().add(TransactionsRequested());
+    }
   }
 
   @override
@@ -116,16 +178,40 @@ class TransactionsScreen extends StatelessWidget {
                           formatDate(transaction.createdAt),
                           style: const TextStyle(fontSize: 12),
                         ),
+
+                        Text(
+                          '${isIncome ? '+' : '-'}${transaction.amount} сом',
+                          style: TextStyle(
+                            color: color,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ],
                     ),
 
-                    trailing: Text(
-                      '${isIncome ? '+' : '-'}${transaction.amount} сом',
-                      style: TextStyle(
-                        color: color,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
+                    // Меню редактирования и удаления
+                    trailing: PopupMenuButton<String>(
+                      tooltip: 'Действия с операцией',
+
+                      onSelected: (action) async {
+                        if (action == 'edit') {
+                          await _openEdit(context, transaction);
+                        } else if (action == 'delete') {
+                          await _confirmDelete(context, transaction);
+                        }
+                      },
+
+                      itemBuilder: (context) => const [
+                        PopupMenuItem<String>(
+                          value: 'edit',
+                          child: Text('Редактировать'),
+                        ),
+
+                        PopupMenuItem<String>(
+                          value: 'delete',
+                          child: Text('Удалить'),
+                        ),
+                      ],
                     ),
                   ),
                 );
