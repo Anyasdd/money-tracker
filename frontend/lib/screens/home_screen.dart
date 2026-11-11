@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../bloc/transactions_bloc.dart';
+import '../repositories/transaction_repository.dart';
+import 'transactions_screen.dart';
 import '../bloc/balance_bloc.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -12,12 +15,33 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Money Tracker'),
         actions: [
+          // Открыть историю транзакций
           IconButton(
-            icon: const Icon(Icons.refresh),
+            tooltip: 'История операций',
+            icon: const Icon(Icons.receipt_long),
+
             onPressed: () {
-              context.read<BalanceBloc>().add(
-                BalanceRequested(),
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => BlocProvider(
+                    create: (_) =>
+                        TransactionsBloc(TransactionRepository())
+                          ..add(TransactionsRequested()),
+
+                    child: const TransactionsScreen(),
+                  ),
+                ),
               );
+            },
+          ),
+
+          // Обновить баланс
+          IconButton(
+            tooltip: 'Обновить баланс',
+            icon: const Icon(Icons.refresh),
+
+            onPressed: () {
+              context.read<BalanceBloc>().add(BalanceRequested());
             },
           ),
         ],
@@ -25,13 +49,9 @@ class HomeScreen extends StatelessWidget {
 
       body: BlocBuilder<BalanceBloc, BalanceState>(
         builder: (context, state) {
-
           // Пока данные загружаются
-          if (state is BalanceInitial ||
-              state is BalanceLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+          if (state is BalanceInitial || state is BalanceLoading) {
+            return const Center(child: CircularProgressIndicator());
           }
 
           // Если произошла ошибка
@@ -44,9 +64,7 @@ class HomeScreen extends StatelessWidget {
 
                   ElevatedButton(
                     onPressed: () {
-                      context.read<BalanceBloc>().add(
-                        BalanceRequested(),
-                      );
+                      context.read<BalanceBloc>().add(BalanceRequested());
                     },
                     child: const Text('Попробовать снова'),
                   ),
@@ -92,9 +110,7 @@ class HomeScreen extends StatelessWidget {
                       child: Card(
                         child: ListTile(
                           title: const Text('Доходы'),
-                          subtitle: Text(
-                            '${balance.totalIncome} сом',
-                          ),
+                          subtitle: Text('${balance.totalIncome} сом'),
                         ),
                       ),
                     ),
@@ -103,9 +119,7 @@ class HomeScreen extends StatelessWidget {
                       child: Card(
                         child: ListTile(
                           title: const Text('Расходы'),
-                          subtitle: Text(
-                            '${balance.totalExpense} сом',
-                          ),
+                          subtitle: Text('${balance.totalExpense} сом'),
                         ),
                       ),
                     ),
@@ -117,9 +131,7 @@ class HomeScreen extends StatelessWidget {
                 Card(
                   child: ListTile(
                     title: const Text('Всего операций'),
-                    trailing: Text(
-                      '${balance.transactionCount}',
-                    ),
+                    trailing: Text('${balance.transactionCount}'),
                   ),
                 ),
               ],
