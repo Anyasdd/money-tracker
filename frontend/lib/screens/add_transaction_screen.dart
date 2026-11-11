@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/add_transaction_bloc.dart';
+import '../widgets/category_chips.dart';
 
 class AddTransactionScreen extends StatefulWidget {
   const AddTransactionScreen({super.key});
@@ -142,10 +143,26 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                   const SizedBox(height: 16),
 
                   // Категория
+                  CategoryChips(
+                    type: _type,
+                    selectedCategory: _categoryController.text.trim(),
+                    enabled: !isSubmitting,
+                    onSelected: (category) {
+                      setState(() {
+                        _categoryController.text = category;
+                      });
+                    },
+                  ),
+
+                  const SizedBox(height: 12),
+
                   TextFormField(
                     controller: _categoryController,
                     enabled: !isSubmitting,
                     maxLength: 50,
+                    onChanged: (_) {
+                      setState(() {});
+                    },
 
                     decoration: const InputDecoration(
                       labelText: 'Категория',

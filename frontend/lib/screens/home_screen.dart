@@ -9,6 +9,7 @@ import '../repositories/transaction_repository.dart';
 
 import 'transactions_screen.dart';
 import 'add_transaction_screen.dart';
+import '../utils/money_format.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -124,7 +125,7 @@ class HomeScreen extends StatelessWidget {
                         const SizedBox(height: 12),
 
                         Text(
-                          '${balance.balance} сом',
+                          formatSom(balance.balance),
                           style: const TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
@@ -143,7 +144,7 @@ class HomeScreen extends StatelessWidget {
                       child: Card(
                         child: ListTile(
                           title: const Text('Доходы'),
-                          subtitle: Text('${balance.totalIncome} сом'),
+                          subtitle: Text(formatSom(balance.totalIncome)),
                         ),
                       ),
                     ),
@@ -152,7 +153,7 @@ class HomeScreen extends StatelessWidget {
                       child: Card(
                         child: ListTile(
                           title: const Text('Расходы'),
-                          subtitle: Text('${balance.totalExpense} сом'),
+                          subtitle: Text(formatSom(balance.totalExpense)),
                         ),
                       ),
                     ),

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/edit_transaction_bloc.dart';
 import '../models/transaction.dart';
+import '../widgets/category_chips.dart';
 
 class EditTransactionScreen extends StatefulWidget {
   final Transaction transaction;
@@ -156,10 +157,26 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                   const SizedBox(height: 16),
 
                   // Категория
+                  CategoryChips(
+                    type: _type,
+                    selectedCategory: _categoryController.text.trim(),
+                    enabled: !isSaving,
+                    onSelected: (category) {
+                      setState(() {
+                        _categoryController.text = category;
+                      });
+                    },
+                  ),
+
+                  const SizedBox(height: 12),
+
                   TextFormField(
                     controller: _categoryController,
                     enabled: !isSaving,
                     maxLength: 50,
+                    onChanged: (_) {
+                      setState(() {});
+                    },
 
                     decoration: const InputDecoration(
                       labelText: 'Категория',

@@ -6,6 +6,7 @@ import '../models/transaction.dart';
 import '../bloc/edit_transaction_bloc.dart';
 import '../repositories/transaction_repository.dart';
 import 'edit_transaction_screen.dart';
+import '../utils/money_format.dart';
 
 class TransactionsScreen extends StatelessWidget {
   const TransactionsScreen({super.key});
@@ -28,7 +29,7 @@ class TransactionsScreen extends StatelessWidget {
 
         content: Text(
           'Удалить операцию "${transaction.category}" '
-          'на сумму ${transaction.amount} сом?',
+          'на сумму ${formatSom(transaction.amount)}?',
         ),
 
         actions: [
@@ -180,7 +181,7 @@ class TransactionsScreen extends StatelessWidget {
                         ),
 
                         Text(
-                          '${isIncome ? '+' : '-'}${transaction.amount} сом',
+                          '${isIncome ? '+' : '−'}${formatSom(transaction.amount)}',
                           style: TextStyle(
                             color: color,
                             fontWeight: FontWeight.bold,
