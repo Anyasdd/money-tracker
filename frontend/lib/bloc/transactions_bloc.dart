@@ -3,13 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../models/transaction.dart';
 import '../repositories/transaction_repository.dart';
 
-
 // EVENTS
 
 sealed class TransactionsEvent {}
 
 class TransactionsRequested extends TransactionsEvent {}
-
 
 // STATES
 
@@ -31,23 +29,17 @@ class TransactionsFailure extends TransactionsState {
   TransactionsFailure(this.message);
 }
 
-
 // BLOC
 
-class TransactionsBloc
-    extends Bloc<TransactionsEvent, TransactionsState> {
-
+class TransactionsBloc extends Bloc<TransactionsEvent, TransactionsState> {
   final TransactionRepository repository;
 
-  TransactionsBloc(this.repository)
-      : super(TransactionsInitial()) {
-
+  TransactionsBloc(this.repository) : super(TransactionsInitial()) {
     on<TransactionsRequested>((event, emit) async {
       emit(TransactionsLoading());
 
       try {
-        final transactions =
-            await repository.fetchTransactions();
+        final transactions = await repository.fetchTransactions();
 
         emit(TransactionsLoaded(transactions));
       } catch (e) {

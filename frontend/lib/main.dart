@@ -20,16 +20,13 @@ class MoneyTrackerApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
 
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.teal,
-        ),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
         useMaterial3: true,
       ),
 
       home: BlocProvider(
-        create: (context) => BalanceBloc(
-          BalanceRepository(),
-        )..add(BalanceRequested()),
+        create: (context) =>
+            BalanceBloc(BalanceRepository())..add(BalanceRequested()),
 
         child: const HomeScreen(),
       ),

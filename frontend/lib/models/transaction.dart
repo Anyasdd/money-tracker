@@ -24,9 +24,7 @@ class Transaction {
       amount: json['amount'].toString(),
       category: json['category'] as String,
       description: json['description'] as String?,
-      createdAt: DateTime.parse(
-        json['created_at'] as String,
-      ).toLocal(),
+      createdAt: DateTime.parse(json['created_at'] as String).toLocal(),
     );
   }
 }

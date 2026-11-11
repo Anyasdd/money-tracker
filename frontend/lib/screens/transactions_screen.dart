@@ -24,9 +24,7 @@ class TransactionsScreen extends StatelessWidget {
             tooltip: 'Обновить',
             icon: const Icon(Icons.refresh),
             onPressed: () {
-              context.read<TransactionsBloc>().add(
-                TransactionsRequested(),
-              );
+              context.read<TransactionsBloc>().add(TransactionsRequested());
             },
           ),
         ],
@@ -34,12 +32,8 @@ class TransactionsScreen extends StatelessWidget {
 
       body: BlocBuilder<TransactionsBloc, TransactionsState>(
         builder: (context, state) {
-
-          if (state is TransactionsInitial ||
-              state is TransactionsLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+          if (state is TransactionsInitial || state is TransactionsLoading) {
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (state is TransactionsFailure) {
@@ -55,10 +49,7 @@ class TransactionsScreen extends StatelessWidget {
                       color: Colors.red,
                     ),
                     const SizedBox(height: 12),
-                    Text(
-                      state.message,
-                      textAlign: TextAlign.center,
-                    ),
+                    Text(state.message, textAlign: TextAlign.center),
                     const SizedBox(height: 12),
                     ElevatedButton(
                       onPressed: () {
@@ -91,17 +82,13 @@ class TransactionsScreen extends StatelessWidget {
               itemCount: transactions.length,
 
               itemBuilder: (context, index) {
-                final Transaction transaction =
-                    transactions[index];
+                final Transaction transaction = transactions[index];
 
                 final isIncome = transaction.isIncome;
 
-                final color = isIncome
-                    ? Colors.green
-                    : Colors.red;
+                final color = isIncome ? Colors.green : Colors.red;
 
-                final description =
-                    transaction.description ?? '';
+                final description = transaction.description ?? '';
 
                 return Card(
                   margin: const EdgeInsets.only(bottom: 10),
@@ -110,32 +97,24 @@ class TransactionsScreen extends StatelessWidget {
                     leading: CircleAvatar(
                       backgroundColor: color.withAlpha(25),
                       child: Icon(
-                        isIncome
-                            ? Icons.arrow_downward
-                            : Icons.arrow_upward,
+                        isIncome ? Icons.arrow_downward : Icons.arrow_upward,
                         color: color,
                       ),
                     ),
 
                     title: Text(
                       transaction.category,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
 
                     subtitle: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (description.isNotEmpty)
-                          Text(description),
+                        if (description.isNotEmpty) Text(description),
 
                         Text(
                           formatDate(transaction.createdAt),
-                          style: const TextStyle(
-                            fontSize: 12,
-                          ),
+                          style: const TextStyle(fontSize: 12),
                         ),
                       ],
                     ),

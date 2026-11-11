@@ -13,19 +13,14 @@ class BalanceRepository {
   Future<Balance> fetchBalance() async {
     final url = Uri.parse('$baseUrl/balance');
 
-    final response = await http.get(url).timeout(
-      const Duration(seconds: 10),
-    );
+    final response = await http.get(url).timeout(const Duration(seconds: 10));
 
     if (response.statusCode == 200) {
-      final json = jsonDecode(response.body)
-          as Map<String, dynamic>;
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
 
       return Balance.fromJson(json);
     } else {
-      throw Exception(
-        'Failed to load balance: ${response.statusCode}',
-      );
+      throw Exception('Failed to load balance: ${response.statusCode}');
     }
   }
 }

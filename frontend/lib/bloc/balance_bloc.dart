@@ -8,7 +8,6 @@ sealed class BalanceEvent {}
 
 class BalanceRequested extends BalanceEvent {}
 
-
 // STATES
 sealed class BalanceState {}
 
@@ -27,7 +26,6 @@ class BalanceFailure extends BalanceState {
 
   BalanceFailure(this.message);
 }
-
 
 // BLOC
 class BalanceBloc extends Bloc<BalanceEvent, BalanceState> {

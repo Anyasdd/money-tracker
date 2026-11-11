@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../bloc/transactions_bloc.dart';
-import '../repositories/transaction_repository.dart';
-import 'transactions_screen.dart';
 import '../bloc/balance_bloc.dart';
+import '../bloc/transactions_bloc.dart';
+import '../bloc/add_transaction_bloc.dart';
+
+import '../repositories/transaction_repository.dart';
+
+import 'transactions_screen.dart';
+import 'add_transaction_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -45,6 +49,30 @@ class HomeScreen extends StatelessWidget {
             },
           ),
         ],
+      ),
+
+      floatingActionButton: FloatingActionButton.extended(
+        icon: const Icon(Icons.add),
+        label: const Text('Добавить'),
+
+        onPressed: () async {
+          final saved = await Navigator.of(context).push<bool>(
+            MaterialPageRoute(
+              builder: (_) => BlocProvider(
+                create: (_) => AddTransactionBloc(TransactionRepository()),
+
+                child: const AddTransactionScreen(),
+              ),
+            ),
+          );
+
+          if (!context.mounted) return;
+
+          // Обновляем баланс после добавления
+          if (saved == true) {
+            context.read<BalanceBloc>().add(BalanceRequested());
+          }
+        },
       ),
 
       body: BlocBuilder<BalanceBloc, BalanceState>(
