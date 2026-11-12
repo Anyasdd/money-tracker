@@ -10,6 +10,7 @@ import '../repositories/transaction_repository.dart';
 import 'transactions_screen.dart';
 import 'add_transaction_screen.dart';
 import '../utils/money_format.dart';
+import 'statistics_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -20,6 +21,25 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Money Tracker'),
         actions: [
+          IconButton(
+            tooltip: 'Статистика',
+            icon: const Icon(Icons.pie_chart_outline),
+
+            onPressed: () {
+              Navigator.of(context).push<void>(
+                MaterialPageRoute<void>(
+                  builder: (_) => BlocProvider(
+                    create: (_) =>
+                        TransactionsBloc(TransactionRepository())
+                          ..add(TransactionsRequested()),
+
+                    child: const StatisticsScreen(),
+                  ),
+                ),
+              );
+            },
+          ),
+
           // Открыть историю транзакций
           IconButton(
             tooltip: 'История операций',
